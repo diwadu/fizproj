@@ -1,3 +1,3 @@
 Rzut ukośny na fizykę
 
-demo: [https://diwadu.github.io/fizproj/]
+demo: https://diwadu.github.io/fizproj/
