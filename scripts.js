@@ -150,7 +150,7 @@ function drawAxesAndGrid() {
     ctx.closePath();
 
     // Opis podziałki na osi Y (z lewej strony)
-    ctx.fillText(valY.toString(), margin - 30, py + 5);
+    ctx.fillText(valY.toString(), margin - 30, py + 100);
   }
 
   // -----------------
@@ -175,7 +175,7 @@ function drawAxesAndGrid() {
   );
 
   // Podpis osi X
-  ctx.fillText("X [m]", canvas.width - margin + 10, canvas.height - margin + 5);
+  ctx.fillText("x [m]", canvas.width - margin + 10, canvas.height - margin + 5);
 
   // -----------------
   // Rysowanie osi Y
@@ -191,7 +191,7 @@ function drawAxesAndGrid() {
 
   // Podpis osi Y
   ctx.save();
-  ctx.translate(margin - 10, margin - 20); // lekkie przesunięcie
+  ctx.translate(margin, margin - 10); // lekkie przesunięcie
   ctx.rotate(-Math.PI / 2); // obróć o 90 st. w lewo
   ctx.fillText("h [m]", 0, 0);
   ctx.restore();
