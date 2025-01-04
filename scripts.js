@@ -8,6 +8,9 @@ const ctx = canvas.getContext("2d");
 const velocitySlider = document.getElementById("velocitySlider");
 const angleSlider = document.getElementById("angleSlider");
 
+// Dropdown dla przyspieszenia grawitacyjnego
+const gravitySelect = document.getElementById("gravitySelect");
+
 // Etykiety pokazujące wartości
 const velocityValue = document.getElementById("velocityValue");
 const angleValue = document.getElementById("angleValue");
@@ -23,7 +26,7 @@ const distanceY = document.getElementById("distanceY");
 const timeVal = document.getElementById("timeVal");
 
 // Parametry fizyczne
-let g = 9.81; // m/s^2
+let g = parseFloat(gravitySelect.value); // m/s^2
 let velocity = parseFloat(velocitySlider.value);
 let angle = parseFloat(angleSlider.value) * (Math.PI / 180); // konwersja stopni -> rad
 
@@ -78,6 +81,11 @@ velocitySlider.addEventListener("input", () => {
 
 angleSlider.addEventListener("input", () => {
   angle = parseFloat(angleSlider.value) * (Math.PI / 180);
+  updateLabels();
+});
+
+gravitySelect.addEventListener("change", () => {
+  g = parseFloat(gravitySelect.value);
   updateLabels();
 });
 
@@ -147,7 +155,7 @@ function drawAxesAndGrid() {
   );
 
   // Podpis osi X
-  ctx.fillText("X (m)", canvas.width - margin + 10, canvas.height - margin + 5);
+  ctx.fillText("X [m]", canvas.width - margin + 10, canvas.height - margin + 5);
 
   // -----------------
   // Rysowanie osi Y
@@ -166,7 +174,7 @@ function drawAxesAndGrid() {
   ctx.save();
   ctx.translate(margin - 10, margin - 20); // lekkie przesunięcie
   ctx.rotate(-Math.PI / 2); // obróć o 90 st. w lewo
-  ctx.fillText("Y (m)", 0, 0);
+  ctx.fillText("h [m]", 0, 0);
   ctx.restore();
 
   ctx.restore();
