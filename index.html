@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Symulacja rzutu ukośnego</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Symulacja rzutu ukośnego</h1>
+    <div class="controls">
+      <label for="velocitySlider">Prędkość początkowa (m/s):</label>
+      <input type="range" id="velocitySlider" min="5" max="50" value="20" />
+      <span id="velocityValue">20</span> m/s <br /><br />
+
+      <label for="angleSlider">Kąt wyrzutu (°):</label>
+      <input type="range" id="angleSlider" min="10" max="80" value="45" />
+      <span id="angleValue">45</span>° <br /><br />
+
+      <button id="startButton">Start</button>
+      <button id="resetButton">Reset</button>
+    </div>
+
+    <canvas id="canvas" width="600" height="400"></canvas>
+
+    <div class="info" id="infoBox">
+      <strong>Parametry aktualne:</strong>
+      <p>Prędkość: <span id="currentVelocity">20</span> m/s</p>
+      <p>Kąt: <span id="currentAngle">45</span>°</p>
+      <p>Odległość pozioma (x): <span id="distanceX">0</span> m</p>
+      <p>Wysokość (y): <span id="distanceY">0</span> m</p>
+      <p>Czas: <span id="timeVal">0</span> s</p>
+    </div>
+
+    <div class="footer">&copy; Prosty projekt demonstracyjny – rzut ukośny</div>
+    <script src="scripts.js"></script>
+  </body>
+</html>
