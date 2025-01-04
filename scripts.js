@@ -4,6 +4,12 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
+// Dodaj globalne zmienne na dynamiczne skale i zakresy
+let dynamicScaleX = 1;
+let dynamicScaleY = 1;
+let maxXDynamic = 300;
+let maxYDynamic = 150;
+
 // Suwaki
 const velocitySlider = document.getElementById("velocitySlider");
 const angleSlider = document.getElementById("angleSlider");
@@ -62,7 +68,7 @@ let pathPoints = [];
 // ------------------------------
 // Energia mechaniczna
 // ------------------------------
-const mass = 1; // kg [NOWOŚĆ]
+const mass = 1; // kg
 
 // --------------------------------
 // Aktualizacja etykiet suwaków
@@ -87,11 +93,14 @@ angleSlider.addEventListener("input", () => {
 gravitySelect.addEventListener("change", () => {
   g = parseFloat(gravitySelect.value);
   updateLabels();
+  drawAxesAndGrid(); // Aktualizuj osie i siatkę po zmianie g
 });
 
 // ---------------------------
 // Rysowanie osi + kratki
 // ---------------------------
+
+// Aktualizowana funkcja rysująca osie i siatkę
 function drawAxesAndGrid() {
   ctx.save();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -101,14 +110,26 @@ function drawAxesAndGrid() {
   ctx.lineWidth = 1;
   ctx.font = "14px Arial";
 
-  // Rysowanie siatki pionowej i poziomej
-  // Krok w "rzeczywistych" metrach (co 50 m w poziomie, co 25 m w pionie - przykładowo)
-  const stepX = 50;
-  const stepY = 25;
+  // Obliczanie maksymalnego zasięgu (R) i maksymalnej wysokości (H)
+  const range = (velocity * velocity * Math.sin(2 * angle)) / g;
+  const maxHeight =
+    (velocity * velocity * Math.pow(Math.sin(angle), 2)) / (2 * g);
+
+  // Ustawienie dynamicznych zakresów z 20% marginesem
+  maxXDynamic = range * 1.2;
+  maxYDynamic = maxHeight * 1.2;
+
+  // Ustawienie dynamicznych skal
+  dynamicScaleX = (canvas.width - 2 * margin) / maxXDynamic;
+  dynamicScaleY = (canvas.height - 2 * margin) / maxYDynamic;
+
+  // Ustal kroki siatki
+  const stepX = Math.ceil(maxXDynamic / 6 / 10) * 10; // Około 6 kroków, zaokrąglone do najbliższej 10
+  const stepY = Math.ceil(maxYDynamic / 6 / 5) * 5; // Około 6 kroków, zaokrąglone do najbliższej 5
 
   // Siatka pionowa (dla X)
-  for (let valX = 0; valX <= maxX; valX += stepX) {
-    let px = margin + valX * scaleX;
+  for (let valX = 0; valX <= maxXDynamic; valX += stepX) {
+    let px = margin + valX * dynamicScaleX;
     ctx.beginPath();
     ctx.moveTo(px, margin);
     ctx.lineTo(px, canvas.height - margin);
@@ -120,8 +141,8 @@ function drawAxesAndGrid() {
   }
 
   // Siatka pozioma (dla Y)
-  for (let valY = 0; valY <= maxY; valY += stepY) {
-    let py = canvas.height - margin - valY * scaleY;
+  for (let valY = 0; valY <= maxYDynamic; valY += stepY) {
+    let py = canvas.height - margin - valY * dynamicScaleY;
     ctx.beginPath();
     ctx.moveTo(margin, py);
     ctx.lineTo(canvas.width - margin, py);
@@ -129,7 +150,6 @@ function drawAxesAndGrid() {
     ctx.closePath();
 
     // Opis podziałki na osi Y (z lewej strony)
-    // Dodajemy kilka px, by tekst nie zachodził na linię
     ctx.fillText(valY.toString(), margin - 30, py + 5);
   }
 
@@ -170,7 +190,6 @@ function drawAxesAndGrid() {
   drawArrow(margin, margin + 10, margin, margin);
 
   // Podpis osi Y
-  // Osią Y jest pionowa, więc umieszczamy napis w pionie lub tuż nad strzałką
   ctx.save();
   ctx.translate(margin - 10, margin - 20); // lekkie przesunięcie
   ctx.rotate(-Math.PI / 2); // obróć o 90 st. w lewo
@@ -281,8 +300,8 @@ function simulate() {
   y = velocity * Math.sin(angle) * t - 0.5 * g * t * t;
 
   // Skalujemy do współrzędnych canvas
-  const canvasX = margin + x * scaleX;
-  const canvasY = canvas.height - margin - y * scaleY;
+  const canvasX = margin + x * dynamicScaleX;
+  const canvasY = canvas.height - margin - y * dynamicScaleY;
 
   // Dodajemy punkt do śladu (jeśli mieści się w granicach)
   if (
@@ -306,28 +325,6 @@ function simulate() {
   distanceX.textContent = x.toFixed(2);
   distanceY.textContent = y.toFixed(2);
   timeVal.textContent = t.toFixed(2);
-
-  // -------------------
-  // Obliczenia energii [NOWOŚĆ]
-  // -------------------
-  const vx = velocity * Math.cos(angle); // Prędkość pozioma (const.)
-  const vy = velocity * Math.sin(angle) - g * t; // Prędkość pionowa
-  const speed = Math.sqrt(vx * vx + vy * vy); // Całkowita prędkość
-
-  const Ek = 0.5 * mass * speed * speed; // Energia kinetyczna
-  const Ep = mass * g * y; // Energia potencjalna
-  const E = Ek + Ep; // Energia całkowita
-
-  // Aktualizacja wartości energii w interfejsie
-  const kineticEnergyElem = document.getElementById("kineticEnergy");
-  const potentialEnergyElem = document.getElementById("potentialEnergy");
-  const totalEnergyElem = document.getElementById("totalEnergy");
-
-  if (kineticEnergyElem && potentialEnergyElem && totalEnergyElem) {
-    kineticEnergyElem.textContent = Ek.toFixed(2);
-    potentialEnergyElem.textContent = Ep.toFixed(2);
-    totalEnergyElem.textContent = E.toFixed(2);
-  }
 
   // Inkrementujemy czas
   t += dt;
@@ -366,19 +363,22 @@ resetButton.addEventListener("click", () => {
   x = 0;
   y = 0;
   pathPoints = [];
+  simulationData = []; // Resetowanie danych symulacji
   distanceX.textContent = "0";
   distanceY.textContent = "0";
   timeVal.textContent = "0";
 
-  const kineticEnergyElem = document.getElementById("kineticEnergy");
-  const potentialEnergyElem = document.getElementById("potentialEnergy");
-  const totalEnergyElem = document.getElementById("totalEnergy");
+  // Resetowanie dynamicznych zmiennych
+  dynamicScaleX = 1;
+  dynamicScaleY = 1;
+  maxXDynamic = 300;
+  maxYDynamic = 150;
 
-  if (kineticEnergyElem) kineticEnergyElem.textContent = "0";
-  if (potentialEnergyElem) potentialEnergyElem.textContent = "0";
-  if (totalEnergyElem) totalEnergyElem.textContent = "0";
+  // Resetowanie wyświetlanych parametrów
+  currentVelocity.textContent = velocitySlider.value;
+  currentAngle.textContent = angleSlider.value;
 
-  drawAxesAndGrid();
+  drawAxesAndGrid(); // Aktualizuj osie i siatkę po resecie
 });
 
 // -----------------------
