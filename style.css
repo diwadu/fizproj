@@ -1,34 +1,103 @@
+html {
+  margin: 0;
+  padding: 0;
+}
+
 body {
   font-family: Arial, sans-serif;
-  margin: 20px;
   background: #f9f9f9;
+  padding-left: 10px;
 }
+
+.title-bar {
+  background-color: rgb(31, 51, 87);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 4rem;
+  font-size: 14px;
+}
+
+.content-bar {
+  position: absolute;
+  top: 5rem;
+}
+
 h1 {
-  margin-bottom: 10px;
+  color: rgb(240, 213, 137);
+  padding-left: 10px;
 }
+
+h2 {
+  color: rgb(31, 51, 87);
+}
+
+h2 a {
+  text-decoration: none;
+  background-color: rgb(31, 51, 87);
+  color: rgb(240, 213, 137);
+  display: inline-block;
+  padding: 5px 15px;
+  font-size: 18px;
+  font-weight: normal;
+}
+
 .controls {
   margin-bottom: 20px;
 }
+
+.controls label {
+  display: block;
+  width: 170px;
+  float: left;
+}
+
+.controls input {
+  display: block;
+  float: left;
+}
+
 label {
   margin-right: 10px;
+  color: #333;
 }
+
 input[type="range"] {
   vertical-align: middle;
 }
+
 #canvas {
   border: 1px solid #333;
   background-color: white;
   display: block;
   margin-top: 20px;
 }
+
 .info {
   margin-top: 10px;
   background: #fffbd0;
   padding: 10px;
   border: 1px solid #ddd;
 }
+
 .footer {
   margin-top: 20px;
   font-size: 0.9em;
   color: #777;
+}
+
+button {
+  background-color: rgb(31, 51, 87);
+  color: rgb(240, 213, 137);
+  padding: 8px 26px;
+  border: none;
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+pre {
+  font-weight: normal;
+  font-size: 16px;
+  margin-left: -50px;
 }

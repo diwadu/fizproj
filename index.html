@@ -6,41 +6,79 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1>Symulacja rzutu ukośnego</h1>
-    <div class="controls">
-      <label for="velocitySlider">Prędkość początkowa (m/s):</label>
-      <input type="range" id="velocitySlider" min="1" max="60" value="45" />
-      <span id="velocityValue">40</span> m/s <br /><br />
-
-      <label for="angleSlider">Kąt wyrzutu (°):</label>
-      <input type="range" id="angleSlider" min="0" max="90" value="45" />
-      <span id="angleValue">45</span>° <br /><br />
-
-      <label for="gravitySelect">Przyspieszenie grawitacyjne:</label>
-      <select id="gravitySelect">
-        <option value="9.81">Ziemia (9.81 m/s²)</option>
-        <option value="1.62">Księżyc (1.62 m/s²)</option>
-        <option value="3.7">Mars (3.7 m/s²)</option>
-        <option value="24.79">Jowisz (24.79 m/s²)</option>
-        <option value="0.38">Merkury (0.38 m/s²)</option>
-        <option value="11.15">Saturn (11.15 m/s²)</option>
-        <option value="274">Słońce (274 m/s²)</option>
-      </select>
-      <br /><br />
-
-      <button id="startButton">Start</button>
-      <button id="resetButton">Reset</button>
+    <div class="title-bar">
+      <h1>Symulacja rzutu ukośnego</h1>
     </div>
+    <div class="content-bar">
+      <h2>Wstęp teoretyczny <a href="#">[pokaż]</a></h2>
+      <div class="theory" style="display: none">
+        <p>
+          <strong>Rzut ukośny</strong> to przykład ruchu dwuwymiarowego, w
+          którym ciało zostaje wyrzucone z prędkością początkową
+          <em>v<sub>0</sub></em> pod kątem <em>α</em> do poziomu. <br /><br />Z
+          pominięciem oporów powietrza, położenie w czasie <em>t</em> opisują
+          wzory:
+        </p>
 
-    <canvas id="canvas" width="600" height="400"></canvas>
+        <pre>
+          x(t) = v<sub>0</sub> cos(α) · t <br />
+          y(t) = v<sub>0</sub> sin(α) · t − (1/2) g t<sup>2</sup>
+        </pre>
 
-    <div class="info" id="infoBox">
-      <strong>Parametry aktualne:</strong>
-      <p>Prędkość: <span id="currentVelocity">20</span> m/s</p>
-      <p>Kąt: <span id="currentAngle">45</span>°</p>
-      <p>Odległość pozioma (x): <span id="distanceX">0</span> m</p>
-      <p>Wysokość (y): <span id="distanceY">0</span> m</p>
-      <p>Czas: <span id="timeVal">0</span> s</p>
+        <p>
+          Wysokość maksymalna H<sub>max</sub> zależy od składowej pionowej
+          prędkości, a całkowity zasięg <em>R</em> — od obu składowych (pionowej
+          i poziomej):
+        </p>
+        <pre>
+          R = (v<sub>0</sub><sup>2</sup> sin(2α)) / g <br/>
+          H<sub>max</sub> = v<sub>0</sub><sup>2</sup>sin<sup>2</sup>(&alpha;) / 2g
+        </pre>
+        <p>
+          Wynika z tego, że na trajektorię ruchu wpływają zarówno kąt wyrzutu
+          &alpha;, prędkość początkowa v<sub>0</sub>, jak i przyspieszenie
+          grawitacyjne
+          <em>g</em>.
+        </p>
+      </div>
+
+      <h2>Symulacja</h2>
+
+      <div class="controls">
+        <label for="velocitySlider">Prędkość początkowa:</label>
+        <input type="range" id="velocitySlider" min="1" max="60" value="45" />
+        <span id="velocityValue">40</span> m/s <br /><br />
+
+        <label for="angleSlider">Kąt wyrzutu:</label>
+        <input type="range" id="angleSlider" min="0" max="90" value="45" />
+        <span id="angleValue">45</span>° <br /><br />
+
+        <label for="gravitySelect">Wartość g:</label>
+        <select id="gravitySelect">
+          <option value="9.81">Ziemia (9.81 m/s²)</option>
+          <option value="1.62">Księżyc (1.62 m/s²)</option>
+          <option value="3.7">Mars (3.7 m/s²)</option>
+          <option value="24.79">Jowisz (24.79 m/s²)</option>
+          <option value="0.38">Merkury (0.38 m/s²)</option>
+          <option value="11.15">Saturn (11.15 m/s²)</option>
+          <option value="274">Słońce (274 m/s²)</option>
+        </select>
+        <br /><br />
+
+        <button id="startButton">Start</button>
+        <button id="resetButton">Reset</button>
+      </div>
+
+      <canvas id="canvas" width="600" height="400"></canvas>
+
+      <div class="info" id="infoBox">
+        <strong>Parametry aktualne:</strong>
+        <p>Prędkość: <span id="currentVelocity">20</span> m/s</p>
+        <p>Kąt: <span id="currentAngle">45</span>°</p>
+        <p>Odległość pozioma (x): <span id="distanceX">0</span> m</p>
+        <p>Wysokość (y): <span id="distanceY">0</span> m</p>
+        <p>Czas: <span id="timeVal">0</span> s</p>
+      </div>
     </div>
 
     <div class="footer">&copy; Prosty projekt demonstracyjny – rzut ukośny</div>

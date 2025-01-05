@@ -342,3 +342,17 @@ resetButton.addEventListener("click", () => {
 updateLabels();
 drawAxesAndGrid();
 addEnergyDisplays();
+
+const colExBtn = document.querySelector("h2 a");
+const theoryBox = document.getElementsByClassName("theory")[0];
+
+colExBtn.addEventListener("click", () => {
+  let collapsed = colExBtn.textContent === "[ukryj]" ? true : false;
+  if (collapsed) {
+    theoryBox.style.display = "none";
+    colExBtn.textContent = "[pokaż]";
+  } else {
+    theoryBox.style.display = "block";
+    colExBtn.textContent = "[ukryj]";
+  }
+});
