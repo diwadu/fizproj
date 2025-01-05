@@ -324,6 +324,14 @@ resetButton.addEventListener("click", () => {
   distanceY.textContent = "0";
   timeVal.textContent = "0";
 
+  const potEl = document.getElementById("potentialEnergy");
+  const kinEl = document.getElementById("kineticEnergy");
+  const totEl = document.getElementById("totalEnergy");
+
+  potEl.textContent = "0";
+  kinEl.textContent = "0";
+  totEl.textContent = "0";
+
   dynamicScaleX = 1;
   dynamicScaleY = 1;
   maxXDynamic = 300;
