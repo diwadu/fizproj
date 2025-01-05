@@ -5,10 +5,10 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 /* Skalowanie dynamiczne */
-let dynamicScaleX = 1;
-let dynamicScaleY = 1;
-let maxXDynamic = 300;
-let maxYDynamic = 150;
+let dynamicScaleX = 1,
+  dynamicScaleY = 1,
+  maxXDynamic = 300,
+  maxYDynamic = 150;
 
 /* Suwaki / Dropdown */
 const velocitySlider = document.getElementById("velocitySlider");
@@ -34,17 +34,16 @@ let g = parseFloat(gravitySelect.value);
 let velocity = parseFloat(velocitySlider.value);
 let angle = parseFloat(angleSlider.value) * (Math.PI / 180);
 let dt = parseFloat(timeConstSelect.value);
-
 const mass = 1;
 
 /* Zmienne stanu ruchu */
 let t = 0,
   x = 0,
-  y = 0;
-let animationId;
-let isSimulating = false;
+  y = 0,
+  animationId,
+  isSimulating = false;
 
-/* Podstawowe marginesy osi */
+/* Marginesy i podstawowe skalowanie */
 const margin = 50;
 const maxX = 300;
 const maxY = 150;
@@ -58,7 +57,7 @@ let pathPoints = [];
    Funkcje pomocnicze
 ======================= */
 
-/* Aktualizacja wyświetlanych wartości */
+/* Aktualizacja wyświetlanych wartości (velocity, angle) */
 function updateLabels() {
   velocityValue.textContent = velocitySlider.value;
   angleValue.textContent = angleSlider.value;
@@ -85,164 +84,8 @@ timeConstSelect.addEventListener("change", () => {
   updateLabels();
   drawAxesAndGrid();
 });
-/* Rysowanie osi + siatki */
-function drawAxesAndGrid2() {
-  ctx.save();
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  ctx.strokeStyle = "#888";
-  ctx.fillStyle = "black";
-  ctx.lineWidth = 1;
-  ctx.font = "14px Arial";
-
-  const range = (velocity * velocity * Math.sin(2 * angle)) / g;
-  const maxHeight =
-    (velocity * velocity * Math.pow(Math.sin(angle), 2)) / (2 * g);
-
-  maxXDynamic = range * 1.2;
-  maxYDynamic = maxHeight * 1.2;
-
-  dynamicScaleX = (canvas.width - 2 * margin) / maxXDynamic;
-  dynamicScaleY = (canvas.height - 2 * margin) / maxYDynamic;
-
-  const stepX = Math.ceil(maxXDynamic / 6 / 10) * 10;
-  const stepY = Math.ceil(maxYDynamic / 6 / 5) * 5;
-
-  for (let valX = 0; valX <= maxXDynamic; valX += stepX) {
-    const px = margin + valX * dynamicScaleX;
-    ctx.beginPath();
-    ctx.moveTo(px, margin);
-    ctx.lineTo(px, canvas.height - margin);
-    ctx.stroke();
-    ctx.closePath();
-    ctx.fillText(valX.toString(), px - 10, canvas.height - margin + 20);
-  }
-
-  for (let valY = 0; valY <= maxYDynamic; valY += stepY) {
-    const py = canvas.height - margin - valY * dynamicScaleY;
-    ctx.beginPath();
-    ctx.moveTo(margin, py);
-    ctx.lineTo(canvas.width - margin, py);
-    ctx.stroke();
-    ctx.closePath();
-    ctx.fillText(valY.toString(), margin - 30, py + 100); // w oryginale +100?
-  }
-
-  ctx.strokeStyle = "black";
-  ctx.lineWidth = 2;
-
-  ctx.beginPath();
-  ctx.moveTo(margin, canvas.height - margin);
-  ctx.lineTo(canvas.width - margin, canvas.height - margin);
-  ctx.stroke();
-  ctx.closePath();
-
-  drawArrow(
-    canvas.width - margin - 10,
-    canvas.height - margin,
-    canvas.width - margin,
-    canvas.height - margin
-  );
-  ctx.fillText("x [m]", canvas.width - margin + 10, canvas.height - margin + 5);
-
-  ctx.beginPath();
-  ctx.moveTo(margin, canvas.height - margin);
-  ctx.lineTo(margin, margin);
-  ctx.stroke();
-  ctx.closePath();
-
-  drawArrow(margin, margin + 10, margin, margin);
-
-  ctx.save();
-  ctx.translate(margin, margin - 10);
-  ctx.rotate(-Math.PI / 2);
-  ctx.fillText("h [m]", 0, 0);
-  ctx.restore();
-
-  ctx.restore();
-}
-
-function drawAxesAndGrid() {
-  ctx.save();
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  ctx.strokeStyle = "#888";
-  ctx.fillStyle = "black";
-  ctx.lineWidth = 1;
-  ctx.font = "14px Arial";
-
-  const range = (velocity * velocity * Math.sin(2 * angle)) / g;
-  const maxHeight =
-    (velocity * velocity * Math.pow(Math.sin(angle), 2)) / (2 * g);
-
-  maxXDynamic = range * 1.2;
-  maxYDynamic = maxHeight * 1.2;
-
-  dynamicScaleX = (canvas.width - 2 * margin) / maxXDynamic;
-  dynamicScaleY = (canvas.height - 2 * margin) / maxYDynamic;
-
-  const stepX = Math.ceil(maxXDynamic / 6 / 10) * 10;
-  const stepY = Math.ceil(maxYDynamic / 6 / 5) * 5;
-
-  // Rysujemy pionowe linie siatki (oś X)
-  for (let valX = 0; valX <= maxXDynamic; valX += stepX) {
-    const px = margin + valX * dynamicScaleX;
-    ctx.beginPath();
-    ctx.moveTo(px, margin);
-    ctx.lineTo(px, canvas.height - margin);
-    ctx.stroke();
-    ctx.closePath();
-    // Etykieta X
-    ctx.fillText(valX.toString(), px - 10, canvas.height - margin + 20);
-  }
-
-  // Rysujemy poziome linie siatki (oś Y)
-  for (let valY = 0; valY <= maxYDynamic; valY += stepY) {
-    const py = canvas.height - margin - valY * dynamicScaleY;
-    ctx.beginPath();
-    ctx.moveTo(margin, py);
-    ctx.lineTo(canvas.width - margin, py);
-    ctx.stroke();
-    ctx.closePath();
-    // Zamiast +100, proponujemy np. +5
-    ctx.fillText(valY.toString(), margin - 30, py + 5);
-  }
-
-  // Oś X
-  ctx.strokeStyle = "black";
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(margin, canvas.height - margin);
-  ctx.lineTo(canvas.width - margin, canvas.height - margin);
-  ctx.stroke();
-  ctx.closePath();
-  drawArrow(
-    canvas.width - margin - 10,
-    canvas.height - margin,
-    canvas.width - margin,
-    canvas.height - margin
-  );
-  ctx.fillText("x [m]", canvas.width - margin + 10, canvas.height - margin + 5);
-
-  // Oś Y
-  ctx.beginPath();
-  ctx.moveTo(margin, canvas.height - margin);
-  ctx.lineTo(margin, margin);
-  ctx.stroke();
-  ctx.closePath();
-  drawArrow(margin, margin + 10, margin, margin);
-
-  // Napis na osi Y
-  ctx.save();
-  ctx.translate(margin, margin - 10);
-  ctx.rotate(-Math.PI / 2);
-  ctx.fillText("h [m]", 0, 0);
-  ctx.restore();
-
-  ctx.restore();
-}
-
-/* Rysowanie grotki */
+/* Rysowanie grotki (strzałki osi) */
 function drawArrow(fromX, fromY, toX, toY) {
   const headLen = 10;
   const dx = toX - fromX;
@@ -274,6 +117,82 @@ function drawArrow(fromX, fromY, toX, toY) {
   ctx.closePath();
 }
 
+/* Rysowanie siatki i osi */
+function drawAxesAndGrid() {
+  ctx.save();
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = "#888";
+  ctx.fillStyle = "black";
+  ctx.lineWidth = 1;
+  ctx.font = "14px Arial";
+
+  const range = (velocity ** 2 * Math.sin(2 * angle)) / g;
+  const maxHeight = (velocity ** 2 * Math.sin(angle) ** 2) / (2 * g);
+
+  maxXDynamic = range * 1.2;
+  maxYDynamic = maxHeight * 1.2;
+
+  dynamicScaleX = (canvas.width - 2 * margin) / maxXDynamic;
+  dynamicScaleY = (canvas.height - 2 * margin) / maxYDynamic;
+
+  const stepX = Math.ceil(maxXDynamic / 6 / 10) * 10;
+  const stepY = Math.ceil(maxYDynamic / 6 / 5) * 5;
+
+  /* pionowe linie (oś X) */
+  for (let valX = 0; valX <= maxXDynamic; valX += stepX) {
+    const px = margin + valX * dynamicScaleX;
+    ctx.beginPath();
+    ctx.moveTo(px, margin);
+    ctx.lineTo(px, canvas.height - margin);
+    ctx.stroke();
+    ctx.closePath();
+    ctx.fillText(valX.toString(), px - 10, canvas.height - margin + 20);
+  }
+
+  /* poziome linie (oś Y) */
+  for (let valY = 0; valY <= maxYDynamic; valY += stepY) {
+    const py = canvas.height - margin - valY * dynamicScaleY;
+    ctx.beginPath();
+    ctx.moveTo(margin, py);
+    ctx.lineTo(canvas.width - margin, py);
+    ctx.stroke();
+    ctx.closePath();
+    ctx.fillText(valY.toString(), margin - 30, py + 5);
+  }
+
+  /* oś X */
+  ctx.strokeStyle = "black";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(margin, canvas.height - margin);
+  ctx.lineTo(canvas.width - margin, canvas.height - margin);
+  ctx.stroke();
+  ctx.closePath();
+  drawArrow(
+    canvas.width - margin - 10,
+    canvas.height - margin,
+    canvas.width - margin,
+    canvas.height - margin
+  );
+  ctx.fillText("x [m]", canvas.width - margin + 10, canvas.height - margin + 5);
+
+  /* oś Y */
+  ctx.beginPath();
+  ctx.moveTo(margin, canvas.height - margin);
+  ctx.lineTo(margin, margin);
+  ctx.stroke();
+  ctx.closePath();
+  drawArrow(margin, margin + 10, margin, margin);
+
+  ctx.save();
+  ctx.translate(margin, margin - 10);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText("h [m]", 0, 0);
+  ctx.restore();
+
+  ctx.restore();
+}
+
 /* Rysowanie piłki */
 function drawBall(posX, posY) {
   const radius = 5;
@@ -298,45 +217,39 @@ function drawPath() {
   ctx.closePath();
 }
 
-/* Dodawanie wyświetlania energii do infoBox (opcjonalne) */
+/* Dodawanie wyświetlania energii (opcjonalne) */
 function addEnergyDisplays() {
-  const infoBox = document.getElementById("infoBox");
+  const infoBox = document.getElementById("infoEnergyBox");
+  if (!infoBox) return; // jeśli nie ma takiego elementu, wyjdź
 
   const epP = document.createElement("p");
   epP.innerHTML =
-    "Energia potencjalna (E<sub>p</sub>): <span id='potentialEnergy'>0</span> J";
+    "<span class='ilabel'>E<sub>p</sub>:</span> <span class='ivalue' id='potentialEnergy'>0</span> J";
   infoBox.appendChild(epP);
 
   const ekP = document.createElement("p");
   ekP.innerHTML =
-    "Energia kinetyczna (E<sub>k</sub>): <span id='kineticEnergy'>0</span> J";
+    "<span class='ilabel'>E<sub>k</sub>:</span> <span class='ivalue' id='kineticEnergy'>0</span> J";
   infoBox.appendChild(ekP);
 
   const totalEP = document.createElement("p");
   totalEP.innerHTML =
-    "Energia całkowita (E): <span id='totalEnergy'>0</span> J";
+    "<span class='ilabel'>E:</span> <span class='ivalue' id='totalEnergy'>0</span> J";
   infoBox.appendChild(totalEP);
 }
 
 /* Główna pętla symulacji */
-
 function simulate() {
   drawAxesAndGrid();
 
-  // Obliczanie pozycji
   x = velocity * Math.cos(angle) * t;
   y = velocity * Math.sin(angle) * t - 0.5 * g * t * t;
 
-  // [NOWOŚĆ] Ograniczamy y do zera
-  if (y < 0) {
-    y = 0;
-  }
+  if (y < 0) y = 0;
 
-  // Skalowanie do canvas
   const canvasX = margin + x * dynamicScaleX;
   const canvasY = canvas.height - margin - y * dynamicScaleY;
 
-  // Rysowanie śladu
   if (
     canvasX >= margin &&
     canvasX <= canvas.width - margin &&
@@ -347,27 +260,22 @@ function simulate() {
   }
   drawPath();
 
-  // Rysowanie piłki (jeżeli nad ziemią)
   if (canvasY < canvas.height - margin && y >= 0) {
     drawBall(canvasX, canvasY);
   }
 
-  // Wyświetlanie x, y, t
   distanceX.textContent = x.toFixed(2);
   distanceY.textContent = y.toFixed(2);
   timeVal.textContent = t.toFixed(2);
 
-  //Obliczenia energii ===
-  // v_x i v_y w danym momencie
   const vx = velocity * Math.cos(angle);
   const vy = velocity * Math.sin(angle) - g * t;
   const speed = Math.sqrt(vx * vx + vy * vy);
 
-  const Ek = 0.5 * mass * speed * speed; // energia kinetyczna
-  const Ep = mass * g * y; // energia potencjalna
-  const E = Ek + Ep; // energia całkowita
+  const Ek = 0.5 * mass * speed * speed;
+  const Ep = mass * g * y;
+  const E = Ek + Ep;
 
-  // Wstawianie do elementów HTML
   const potEl = document.getElementById("potentialEnergy");
   const kinEl = document.getElementById("kineticEnergy");
   const totEl = document.getElementById("totalEnergy");
@@ -380,7 +288,6 @@ function simulate() {
 
   t += dt;
 
-  // Sprawdzenie, czy obiekt "wylądował"
   if (y <= 0 && t > 0.1) {
     isSimulating = false;
     cancelAnimationFrame(animationId);
@@ -428,16 +335,16 @@ resetButton.addEventListener("click", () => {
   drawAxesAndGrid();
 });
 
-/* Inicjalizacja na starcie */
+/* Inicjalizacja */
 updateLabels();
 drawAxesAndGrid();
 addEnergyDisplays();
 
+/* Rozwijanie/Zwijanie Teorii (opcjonalne) */
 const colExBtn = document.querySelector("h2 a");
 const theoryBox = document.getElementsByClassName("theory")[0];
-
 colExBtn.addEventListener("click", () => {
-  let collapsed = colExBtn.textContent === "[ukryj]" ? true : false;
+  let collapsed = colExBtn.textContent === "[ukryj]";
   if (collapsed) {
     theoryBox.style.display = "none";
     colExBtn.textContent = "[pokaż]";

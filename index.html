@@ -79,16 +79,36 @@
       <canvas id="canvas" width="600" height="400"></canvas>
 
       <div class="info" id="infoBox">
-        <strong>Parametry aktualne:</strong>
-        <p>Prędkość: <span id="currentVelocity">20</span> m/s</p>
-        <p>Kąt: <span id="currentAngle">45</span>°</p>
-        <p>Odległość pozioma (x): <span id="distanceX">0</span> m</p>
-        <p>Wysokość (y): <span id="distanceY">0</span> m</p>
-        <p>Czas: <span id="timeVal">0</span> s</p>
+        <strong>Parametry aktualne (w czasie trwania symulacji)</strong>
+        <p>
+          <span class="ilabel">Prędkość:</span>
+          <span class="ivalue" id="currentVelocity">20</span> m/s
+        </p>
+        <p>
+          <span class="ilabel">Kąt:</span>
+          <span class="ivalue" id="currentAngle">45</span>°
+        </p>
+        <p>
+          <span class="ilabel">Odległość pozioma (x):</span>
+          <span class="ivalue" id="distanceX">0</span> m
+        </p>
+        <p>
+          <span class="ilabel">Wysokość (h):</span>
+          <span class="ivalue" id="distanceY">0</span> m
+        </p>
+        <p>
+          <span class="ilabel">Czas:</span>
+          <span class="ivalue" id="timeVal">0</span> s
+        </p>
+      </div>
+
+      <div class="info" id="infoEnergyBox">
+        <strong>Energie (założenie że masa obiektu = 1kg)</strong>
+      </div>
+      <div class="footer">
+        &copy; Dawid Chrzanowski 2025 - Rzut ukośny (projekt zaliczeniowy)
       </div>
     </div>
-
-    <div class="footer">&copy; Prosty projekt demonstracyjny – rzut ukośny</div>
     <script src="scripts.js"></script>
   </body>
 </html>

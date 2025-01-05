@@ -76,7 +76,7 @@ input[type="range"] {
 
 .info {
   margin-top: 10px;
-  background: #fffbd0;
+  background: rgb(246, 238, 215);
   padding: 10px;
   border: 1px solid #ddd;
 }
@@ -105,4 +105,27 @@ pre {
 div.theory {
   background-color: rgb(220, 230, 241);
   padding: 2px 5px;
+}
+
+div.technology {
+  background-color: rgb(220, 230, 241);
+  padding: 2px 5px;
+}
+
+div.info span.ilabel {
+  width: 200px;
+  display: inline-block;
+  font-weight: bold;
+}
+
+div.info span.ivalue {
+}
+
+div.info {
+  font-size: 14px;
+}
+
+div.info strong {
+  font-size: 18px;
+  color: rgb(31, 51, 87);
 }
