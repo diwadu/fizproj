@@ -63,7 +63,7 @@ To **serce** kodu. Odpowiada za:
 3. **Rysowanie** obiektu i/lub aktualizacja śladu.
 4. **Obliczanie energii** (kinetycznej, potencjalnej, całkowitej) i wyświetlanie jej w interfejsie.
 5. **Inkrementację** czasu o \( dt \) w każdej klatce animacji.
-6. **Zatrzymanie** symulacji, gdy ciało spadnie na ziemię (tj. \(y \le 0\)).
+6. **Zatrzymanie** symulacji, gdy ciało spadnie na ziemię (tj. \(y <= 0\)).
 
 ---
 
