@@ -23,7 +23,7 @@ który składa ruch ciała w rzucie ukośnym
 
 # Opis projektu oraz użytych technologii
 
-Projekt został napisany w języku JS z użyciem HTML + CSS.
+Projekt został napisany w języku JS z użyciem HTML + CSS. Autor jest programistą webowym, więc był to najbardziej praktyczny wybór.
 Wszystkie źródła są zapisane w niniejszym repozytorium, które jest publicznie dostępne do wglądu.
 
 ## Poniższy opis dotyczy pliku scripts.js, który stanowi serce projektu.
