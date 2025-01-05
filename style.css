@@ -101,3 +101,8 @@ pre {
   font-size: 16px;
   margin-left: -50px;
 }
+
+div.theory {
+  background-color: rgb(220, 230, 241);
+  padding: 2px 5px;
+}

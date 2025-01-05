@@ -14,6 +14,7 @@ let maxYDynamic = 150;
 const velocitySlider = document.getElementById("velocitySlider");
 const angleSlider = document.getElementById("angleSlider");
 const gravitySelect = document.getElementById("gravitySelect");
+const timeConstSelect = document.getElementById("timeConstSelect");
 
 /* Etykiety wyświetlane */
 const velocityValue = document.getElementById("velocityValue");
@@ -32,7 +33,8 @@ const timeVal = document.getElementById("timeVal");
 let g = parseFloat(gravitySelect.value);
 let velocity = parseFloat(velocitySlider.value);
 let angle = parseFloat(angleSlider.value) * (Math.PI / 180);
-let dt = 0.1;
+let dt = parseFloat(timeConstSelect.value);
+
 const mass = 1;
 
 /* Zmienne stanu ruchu */
@@ -78,9 +80,13 @@ gravitySelect.addEventListener("change", () => {
   updateLabels();
   drawAxesAndGrid();
 });
-
+timeConstSelect.addEventListener("change", () => {
+  dt = parseFloat(timeConstSelect.value);
+  updateLabels();
+  drawAxesAndGrid();
+});
 /* Rysowanie osi + siatki */
-function drawAxesAndGrid() {
+function drawAxesAndGrid2() {
   ctx.save();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -147,6 +153,86 @@ function drawAxesAndGrid() {
 
   drawArrow(margin, margin + 10, margin, margin);
 
+  ctx.save();
+  ctx.translate(margin, margin - 10);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText("h [m]", 0, 0);
+  ctx.restore();
+
+  ctx.restore();
+}
+
+function drawAxesAndGrid() {
+  ctx.save();
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.strokeStyle = "#888";
+  ctx.fillStyle = "black";
+  ctx.lineWidth = 1;
+  ctx.font = "14px Arial";
+
+  const range = (velocity * velocity * Math.sin(2 * angle)) / g;
+  const maxHeight =
+    (velocity * velocity * Math.pow(Math.sin(angle), 2)) / (2 * g);
+
+  maxXDynamic = range * 1.2;
+  maxYDynamic = maxHeight * 1.2;
+
+  dynamicScaleX = (canvas.width - 2 * margin) / maxXDynamic;
+  dynamicScaleY = (canvas.height - 2 * margin) / maxYDynamic;
+
+  const stepX = Math.ceil(maxXDynamic / 6 / 10) * 10;
+  const stepY = Math.ceil(maxYDynamic / 6 / 5) * 5;
+
+  // Rysujemy pionowe linie siatki (oś X)
+  for (let valX = 0; valX <= maxXDynamic; valX += stepX) {
+    const px = margin + valX * dynamicScaleX;
+    ctx.beginPath();
+    ctx.moveTo(px, margin);
+    ctx.lineTo(px, canvas.height - margin);
+    ctx.stroke();
+    ctx.closePath();
+    // Etykieta X
+    ctx.fillText(valX.toString(), px - 10, canvas.height - margin + 20);
+  }
+
+  // Rysujemy poziome linie siatki (oś Y)
+  for (let valY = 0; valY <= maxYDynamic; valY += stepY) {
+    const py = canvas.height - margin - valY * dynamicScaleY;
+    ctx.beginPath();
+    ctx.moveTo(margin, py);
+    ctx.lineTo(canvas.width - margin, py);
+    ctx.stroke();
+    ctx.closePath();
+    // Zamiast +100, proponujemy np. +5
+    ctx.fillText(valY.toString(), margin - 30, py + 5);
+  }
+
+  // Oś X
+  ctx.strokeStyle = "black";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(margin, canvas.height - margin);
+  ctx.lineTo(canvas.width - margin, canvas.height - margin);
+  ctx.stroke();
+  ctx.closePath();
+  drawArrow(
+    canvas.width - margin - 10,
+    canvas.height - margin,
+    canvas.width - margin,
+    canvas.height - margin
+  );
+  ctx.fillText("x [m]", canvas.width - margin + 10, canvas.height - margin + 5);
+
+  // Oś Y
+  ctx.beginPath();
+  ctx.moveTo(margin, canvas.height - margin);
+  ctx.lineTo(margin, margin);
+  ctx.stroke();
+  ctx.closePath();
+  drawArrow(margin, margin + 10, margin, margin);
+
+  // Napis na osi Y
   ctx.save();
   ctx.translate(margin, margin - 10);
   ctx.rotate(-Math.PI / 2);
@@ -241,6 +327,11 @@ function simulate() {
   x = velocity * Math.cos(angle) * t;
   y = velocity * Math.sin(angle) * t - 0.5 * g * t * t;
 
+  // [NOWOŚĆ] Ograniczamy y do zera
+  if (y < 0) {
+    y = 0;
+  }
+
   // Skalowanie do canvas
   const canvasX = margin + x * dynamicScaleX;
   const canvasY = canvas.height - margin - y * dynamicScaleY;
@@ -287,7 +378,6 @@ function simulate() {
     totEl.textContent = E.toFixed(2);
   }
 
-  // Inkrementacja czasu
   t += dt;
 
   // Sprawdzenie, czy obiekt "wylądował"
